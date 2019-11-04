@@ -4,7 +4,7 @@ import javax.xml.ws.Response;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-@ApplicationPath("/")
+@ApplicationPath("/provider")
 public class RestApplication extends Application {
 
 }
