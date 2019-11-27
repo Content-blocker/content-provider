@@ -1,10 +1,10 @@
 FROM openjdk:8
 
-RUN mkdir /provider
+RUN mkdir /provider-api
 
-WORKDIR /provider
+WORKDIR /provider-api
 
-ADD ./provider-api/target/provider-api-1.0.0.jar /provider
+ADD ./provider-api/target/provider-api-1.0.0.jar /provider-api
 
 EXPOSE 8080
 

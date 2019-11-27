@@ -90,7 +90,6 @@
     <orderEntry type="library" name="Maven: com.kumuluz.ee.metrics:kumuluzee-metrics-core:1.1.3" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.microprofile.metrics:microprofile-metrics-api:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: io.dropwizard.metrics:metrics-core:4.0.5" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
     <orderEntry type="library" name="Maven: io.dropwizard.metrics:metrics-jvm:4.0.5" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.9.9" level="project" />
     <orderEntry type="library" name="Maven: com.kumuluz.ee.jwt:kumuluzee-jwt-auth:1.1.1" level="project" />
@@ -161,5 +160,7 @@
     <orderEntry type="library" name="Maven: org.javassist:javassist:3.24.1-GA" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.9.9" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.9.9" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.5" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.6.4" level="project" />
   </component>
 </module>
