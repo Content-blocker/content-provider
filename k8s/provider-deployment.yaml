@@ -13,7 +13,7 @@ spec:
         app: blocker-provider
     spec:
       containers:
-        - image: docker.io/sr123/provider:provider-1.0.0-SNAPSHOT-7.1
+        - image: docker.io/sr123/provider:provider-1.0.0-SNAPSHOT-8.1
           name: blocker-provider
           env:
             - name: KUMULUZEE_DISCOVERY_CLUSTER
