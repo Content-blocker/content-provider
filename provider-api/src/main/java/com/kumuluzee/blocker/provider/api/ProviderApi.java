@@ -1,6 +1,7 @@
 package com.kumuluzee.blocker.provider.api;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 @Path("/provider")
 public class ProviderApi {
@@ -11,6 +12,8 @@ public class ProviderApi {
 
     @GET
     @Path("/info")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public String info() {
         String r = new StringBuilder()
                 .append("\"clani\": [\"sr3182\"],")
