@@ -25,6 +25,8 @@ spec:
             - http://0.0.0.0:2379
             - --advertise-client-urls
             - http://etcd:2379
+            - --etcd-servers
+             http://etcd:2379
             - --initial-cluster-state
             - new
             - -cors

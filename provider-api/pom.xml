@@ -35,6 +35,16 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.6.4</version>
         </dependency>
+        <dependency>
+            <artifactId>kumuluzee-config-etcd</artifactId>
+            <groupId>com.kumuluz.ee.config</groupId>
+            <version>${kumuluzee-config.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.kumuluz.ee.discovery</groupId>
+            <artifactId>kumuluzee-discovery-etcd</artifactId>
+            <version>${kumuluzee-discovery.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
