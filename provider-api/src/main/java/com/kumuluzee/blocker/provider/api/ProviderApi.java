@@ -34,15 +34,13 @@ public class ProviderApi {
     @DiscoverService(value = "provider", environment = "test", version = "1.0.0", accessType = AccessType.DIRECT)
     Optional<String> providerUrlStringDirect;
 
-    @Inject
-    @DiscoverService(value = "provider", environment = "test", version = "1.0.0")
-    private WebTarget target;
-
     @GET
+    @Produces(MediaType.TEXT_HTML)
+    @Consumes(MediaType.APPLICATION_JSON)
     public String getResources() {
         String links = "";
         if(providerUrlString.isPresent()){
-            links += "<a href='"+ providerUrlString.get() + "/provider/integrations'>provider/integrations</a>";
+            links += "<a href='"+ providerUrlString.get() + "/provider/integrations'>provider/integrations</a><br>";
         }
         if(aiUrlString.isPresent()){
             links += "<a href='"+ aiUrlString.get() + "/ai'>ai</a>";
@@ -56,8 +54,7 @@ public class ProviderApi {
         return "ai gateway: " + aiUrlString.toString() + "\n" +
                 "provider gateway: " + providerUrlString.toString() + "\n" +
                 "ai direct: " +  aiUrlStringDirect.toString() + "\n" +
-                "provider direct: " + providerUrlStringDirect.toString() + "\n" +
-                "request ai: " + target.path("/ai/integrations").request().get().toString();
+                "provider direct: " + providerUrlStringDirect.toString() + "\n";
     }
 
     static String ipProvider = "00";
