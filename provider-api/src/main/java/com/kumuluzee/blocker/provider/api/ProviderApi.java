@@ -57,8 +57,10 @@ public class ProviderApi {
     public String integrations(){
         String out = "noai";
         if(aiTarget.isPresent()){
-            Response response = aiTarget.get().path("/api/proxyprovider").request().get();
-            out = response.readEntity(String.class);
+            try {
+                Response response = aiTarget.get().path("/api/proxyprovider").request().get();
+                out = response.readEntity(String.class);
+            } catch(Exception e){ out = e.getMessage();}
         }
         return "ai gateway: " + aiUrlString.toString() + "\n" +
                 "provider gateway: " + providerUrlString.toString() + "\n" +
