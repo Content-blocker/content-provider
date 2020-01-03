@@ -60,7 +60,7 @@ public class ProviderApi {
             try {
                 Response response = aiTarget.get().path("/api/proxyprovider").request().get();
                 out = response.readEntity(String.class);
-            } catch(Exception e){ out = e.getMessage(); out += "   --- " aiTarget.get().path("/api/proxyprovider").toString();}
+            } catch(Exception e){ out = e.getMessage(); out += "   --- " + aiTarget.get().path("/api/proxyprovider").toString();}
         }
         return "ai gateway: " + aiUrlString.toString() + "\n" +
                 "provider gateway: " + providerUrlString.toString() + "\n" +
