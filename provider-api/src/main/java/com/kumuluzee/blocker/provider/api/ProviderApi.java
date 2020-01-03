@@ -6,6 +6,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import com.kumuluz.ee.discovery.annotations.DiscoverService;
+import com.kumuluz.ee.discovery.enums.AccessType;
 
 import java.util.Optional;
 
@@ -15,18 +16,22 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ProviderApi {
 
-    @GET
-    public String getResources() {
-        return "Hellow world! <br> I provide.";
-    }
-
     @Inject
-    @DiscoverService(value = "ai", environment = "test", version = "1.0.0")
+    @DiscoverService(value = "ai", environment = "test", version = "1.0.0", accessType = AccessType.GATEWAY)
     Optional<String> aiUrlString;
 
     @Inject
-    @DiscoverService(value = "provider", environment = "test", version = "1.0.0")
+    @DiscoverService(value = "provider", environment = "test", version = "1.0.0", accessType = AccessType.GATEWAY)
     Optional<String> providerUrlString;
+
+    @GET
+    public String getResources() {
+        String links = "";
+        if(aiUrlString.isPresent()){
+            links = "<a href='"+ providerUrlString.get() + "/provider/integrations'>integrations</a>";
+        }
+        return "Hellow world! <br> I provide. <br>" + links;
+    }
 
     @GET
     @Path("/integrations")

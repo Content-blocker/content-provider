@@ -13,15 +13,15 @@ spec:
         app: blocker-ai
     spec:
       containers:
-        - image: docker.io/sr123/ai:ai-1.0.0-SNAPSHOT-8.1
+        - image: docker.io/sr123/ai:ai-1.0.0-SNAPSHOT-7.1
           name: blocker-ai
           env:
             - name: KUMULUZEE_DISCOVERY_CLUSTER
               value: gcloud
             - name: KUMULUZEE_DISCOVERY_ETCD_HOSTS
-              value: http://etcd:2379
+              value: http://34.89.142.186:2379
             - name: KUMULUZEE_CONFIG_ETCD_HOSTS
-              value: http://etcd:2379
+              value: http://34.89.142.186:2379
             - name: KUMULUZEE_SERVER_BASEURL
               value: http://35.240.79.227:8082
             #- name: KUMULUZEE_DATASOURCES0_CONNECTIONURL
