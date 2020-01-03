@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import javax.xml.ws.Response;
+import javax.ws.rs.core.Response;
 
 import com.kumuluz.ee.discovery.annotations.DiscoverService;
 import com.kumuluz.ee.discovery.enums.AccessType;
@@ -21,6 +21,10 @@ public class ProviderApi {
     @Inject
     @DiscoverService(value = "ai", environment = "test", version = "1.0.0", accessType = AccessType.GATEWAY)
     Optional<String> aiUrlString;
+
+    @Inject
+    @DiscoverService(value = "ai", environment = "test", version = "1.0.0", accessType = AccessType.GATEWAY)
+    Optional<WebTarget> aiTarget;
 
     @Inject
     @DiscoverService(value = "ai", environment = "test", version = "1.0.0", accessType = AccessType.DIRECT)
@@ -51,10 +55,16 @@ public class ProviderApi {
     @GET
     @Path("/integrations")
     public String integrations(){
+        String out = "noai";
+        if(aiTarget.isPresent()){
+            Response response = aiTarget.get().path("/api/proxyprovider").request().get();
+            out = response.readEntity(String.class);
+        }
         return "ai gateway: " + aiUrlString.toString() + "\n" +
                 "provider gateway: " + providerUrlString.toString() + "\n" +
                 "ai direct: " +  aiUrlStringDirect.toString() + "\n" +
-                "provider direct: " + providerUrlStringDirect.toString() + "\n";
+                "provider direct: " + providerUrlStringDirect.toString() + "\n" +
+                out;
     }
 
     static String ipProvider = "00";
