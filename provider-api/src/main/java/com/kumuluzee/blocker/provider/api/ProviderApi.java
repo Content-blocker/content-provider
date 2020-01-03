@@ -13,7 +13,7 @@ import com.kumuluz.ee.discovery.enums.AccessType;
 import java.util.Optional;
 
 @RequestScoped
-@Path("/provider")
+@Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ProviderApi {
@@ -40,10 +40,10 @@ public class ProviderApi {
     public String getResources() {
         String links = "";
         if(providerUrlString.isPresent()){
-            links += "<a href='"+ providerUrlString.get() + "/provider/integrations'>provider/integrations</a><br>";
+            links += "<a href='"+ providerUrlString.get() + "/api/integrations'>provider/api/integrations</a><br>";
         }
         if(aiUrlString.isPresent()){
-            links += "<a href='"+ aiUrlString.get() + "/ai'>ai</a>";
+            links += "<a href='"+ aiUrlString.get() + "/api'>ai/api</a>";
         }
         return "Hellow world! <br> I provide. <br>" + links;
     }
