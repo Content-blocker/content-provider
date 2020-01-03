@@ -3,7 +3,9 @@ package com.kumuluzee.blocker.provider.api;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.xml.ws.Response;
 
 import com.kumuluz.ee.discovery.annotations.DiscoverService;
 import com.kumuluz.ee.discovery.enums.AccessType;
@@ -21,14 +23,29 @@ public class ProviderApi {
     Optional<String> aiUrlString;
 
     @Inject
+    @DiscoverService(value = "ai", environment = "test", version = "1.0.0", accessType = AccessType.DIRECT)
+    Optional<String> aiUrlStringDirect;
+
+    @Inject
     @DiscoverService(value = "provider", environment = "test", version = "1.0.0", accessType = AccessType.GATEWAY)
     Optional<String> providerUrlString;
+
+    @Inject
+    @DiscoverService(value = "provider", environment = "test", version = "1.0.0", accessType = AccessType.DIRECT)
+    Optional<String> providerUrlStringDirect;
+
+    @Inject
+    @DiscoverService(value = "provider", environment = "test", version = "1.0.0")
+    private WebTarget target;
 
     @GET
     public String getResources() {
         String links = "";
+        if(providerUrlString.isPresent()){
+            links += "<a href='"+ providerUrlString.get() + "/provider/integrations'>provider/integrations</a>";
+        }
         if(aiUrlString.isPresent()){
-            links = "<a href='"+ providerUrlString.get() + "/provider/integrations'>integrations</a>";
+            links += "<a href='"+ aiUrlString.get() + "/ai'>ai</a>";
         }
         return "Hellow world! <br> I provide. <br>" + links;
     }
@@ -36,8 +53,11 @@ public class ProviderApi {
     @GET
     @Path("/integrations")
     public String integrations(){
-        return "ai: " + aiUrlString.toString() + "\n" +
-                "provider: " + providerUrlString.toString() + "\n";
+        return "ai gateway: " + aiUrlString.toString() + "\n" +
+                "provider gateway: " + providerUrlString.toString() + "\n" +
+                "ai direct: " +  aiUrlStringDirect.toString() + "\n" +
+                "provider direct: " + providerUrlStringDirect.toString() + "\n" +
+                "request ai: " + target.path("/ai/integrations").request().get().toString();
     }
 
     static String ipProvider = "00";
