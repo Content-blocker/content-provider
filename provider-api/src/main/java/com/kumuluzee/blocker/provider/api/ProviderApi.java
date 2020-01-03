@@ -7,6 +7,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 import com.kumuluz.ee.discovery.annotations.DiscoverService;
 import com.kumuluz.ee.discovery.enums.AccessType;
 
@@ -14,92 +15,40 @@ import java.util.Optional;
 
 @RequestScoped
 @Path("/api")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.TEXT_PLAIN)
+@Consumes(MediaType.TEXT_PLAIN)
 public class ProviderApi {
-
-    @Inject
-    @DiscoverService(value = "ai", environment = "test", version = "1.0.0", accessType = AccessType.GATEWAY)
-    Optional<String> aiUrlString;
-
-    @Inject
-    @DiscoverService(value = "ai", environment = "test", version = "1.0.0", accessType = AccessType.GATEWAY)
-    Optional<WebTarget> aiTarget;
-
-    @Inject
-    @DiscoverService(value = "ai", environment = "test", version = "1.0.0", accessType = AccessType.DIRECT)
-    Optional<String> aiUrlStringDirect;
-
-    @Inject
-    @DiscoverService(value = "provider", environment = "test", version = "1.0.0", accessType = AccessType.GATEWAY)
-    Optional<String> providerUrlString;
-
-    @Inject
-    @DiscoverService(value = "provider", environment = "test", version = "1.0.0", accessType = AccessType.DIRECT)
-    Optional<String> providerUrlStringDirect;
+    static Optional<WebTarget> aiTarget = CustomDiscovery.discover("ai", "test", "1.0.0");
+    static Optional<WebTarget> providerTarget = CustomDiscovery.discover("provider", "test", "1.0.0");
+    static String aiString = aiTarget.get().getUri().toString();
+    static String providerString = providerTarget.get().getUri().toString();
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.APPLICATION_JSON)
     public String getResources() {
         String links = "";
-        if(providerUrlString.isPresent()){
-            links += "<a href='"+ providerUrlString.get() + "/api/integrations'>provider/api/integrations</a><br>";
+        if(providerTarget.isPresent()){
+            links += "<a href='"+ providerString + "/api/integrations'>provider/api/integrations</a><br>";
         }
-        if(aiUrlString.isPresent()){
-            links += "<a href='"+ aiUrlString.get() + "/api'>ai/api</a>";
+        if(aiTarget.isPresent()){
+            links += "<a href='"+ aiString + "/api'>ai/api</a><br>";
         }
         return "Hellow world! <br> I provide. <br>" + links;
     }
 
     @GET
     @Path("/integrations")
-    public String integrations(){
-        String out = "noai";
-        if(aiTarget.isPresent()){
-            try {
-                Response response = aiTarget.get().path("/api/proxyprovider").request().get();
-                out = response.readEntity(String.class);
-            } catch(Exception e){ out = e.getMessage(); out += "   --- " + aiTarget.get().path("/api/proxyprovider").toString();}
+    public String integrations() {
+        String out = "";
+        if (aiTarget.isPresent()) {
+            out += "ai: " + aiString + "\n";
         }
-        return "ai gateway: " + aiUrlString.toString() + "\n" +
-                "provider gateway: " + providerUrlString.toString() + "\n" +
-                "ai direct: " +  aiUrlStringDirect.toString() + "\n" +
-                "provider direct: " + providerUrlStringDirect.toString() + "\n" +
-                out;
-    }
-
-    static String ipProvider = "00";
-    static String  ipAi = "11";
-
-    @GET
-    @Path("/providerip/{newIpProvider}")
-    public String setIpProvider(@PathParam("newIpProvider") String newIpProvider) {
-        ipProvider = newIpProvider;
-        return "New provider ip is: " + ipProvider;
-    }
-
-    @GET
-    @Path("/aiip/{newIpAi}")
-    public String setAi(@PathParam("newIpAi") String newIpAi) {
-        ipAi = newIpAi;
-        return "New ai ip is: " + ipAi;
-    }
-
-
-    @GET
-    @Path("/info")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public String info() {
-        String r = new StringBuilder()
-                .append("\"clani\": [\"sr3182\"],")
-                .append("\"opis_projekta\": \"Projekt implementira naprednega blockerja spletnih vsebin (najprej spoilerjev).\",")
-                .append("\"mikrostoritve\": [\"http://" + ipProvider + ":8080/provider\", \"http://" + ipAi + ":8080/ai\"],")
-                .append("\"github\": [\"https://github.com/Content-blocker/content-provider\", \"https://github.com/Content-blocker/ai\"],")
-                .append("\"travis\": [\"https://travis-ci.org/Content-blocker/content-provider\", \"https://travis-ci.org/Content-blocker/ai\"],")
-                .append("\"dockerhub\": [\"https://cloud.docker.com/repository/docker/sr123/provider/\", \"https://cloud.docker.com/repository/docker/sr123/ai/\"]")
-                .toString();
-        return "{" + r + "}";
+        else out+= "missing ai \n";
+        if (providerTarget.isPresent()) {
+            out += "provider: " + providerString + "\n";
+        }
+        else out+= "missing provider \n";
+        return out;
     }
 }
