@@ -1,21 +1,16 @@
 package com.kumuluzee.blocker.provider.api;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import com.kumuluz.ee.logs.cdi.*;
 import org.eclipse.microprofile.metrics.annotation.Timed;
-import javax.ws.rs.core.Response;
-
-import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
-import com.kumuluz.ee.discovery.annotations.DiscoverService;
-import com.kumuluz.ee.discovery.enums.AccessType;
-
 import java.util.Optional;
 
 @RequestScoped
 @Path("/api")
+@Log(value = LogParams.METRICS, methodCall = true)
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
 public class ProviderApi {

@@ -12,13 +12,13 @@ kumuluzee:
   #    username: dbuser
   #    password: postgres
   #    max-pool-size: 20
-  #config:
-  #  etcd:
-  #    hosts: http://34.89.142.186:2379
   discovery:
     etcd:
       hosts: http://34.89.142.186:2379/
   health:
+    servlet:
+      mapping: /provider/health
+      enabled: true
     logs:
       enabled: true
     checks:
@@ -28,6 +28,12 @@ kumuluzee:
     web-instrumentation:
       - name: provider-api
         url-pattern: /provider/api/*
+  logs:
+    loggers:
+      - name: com.kumuluz.ee.blocker.provider.api.ProviderApi
+        level: INFO
+      - name: ''
+        level: INFO
 configuration-properties:
   provider:
     enabled: true
