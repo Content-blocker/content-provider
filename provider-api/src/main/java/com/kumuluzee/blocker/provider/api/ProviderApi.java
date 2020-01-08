@@ -4,13 +4,15 @@ import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+
+import com.kumuluz.ee.logs.*;
 import com.kumuluz.ee.logs.cdi.*;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import java.util.Optional;
 
+@Log
 @RequestScoped
 @Path("/api")
-@Log(value = LogParams.METRICS, methodCall = true)
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
 public class ProviderApi {
@@ -33,6 +35,15 @@ public class ProviderApi {
             links += "<a href='"+ aiString + "/ai/api'>ai/api/</a><br>";
         }
         return "Hellow world! <br> I provide. <br>" + links;
+    }
+
+    @GET
+    @Timed
+    @Path("/makelog")
+    public String makelog() {
+        final Logger LOG = LogManager.getLogger(ProviderApi.class.getName());
+        LOG.info("WroteCustomLogMessage");
+        return "Wrote custom log.";
     }
 
     @GET

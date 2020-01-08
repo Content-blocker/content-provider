@@ -13,7 +13,7 @@ spec:
         app: blocker-provider
     spec:
       containers:
-        - image: docker.io/sr123/provider:provider-1.0.0-SNAPSHOT-9.1
+        - image: docker.io/sr123/provider:provider-1.0.0-SNAPSHOT-21.1
           name: blocker-provider
           env:
             - name: KUMULUZEE_DISCOVERY_CLUSTER
@@ -39,13 +39,13 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /health/live
+              path: /provider/health/live
               port: server
             initialDelaySeconds: 20
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /health/ready
+              path: /provider/health/ready
               port: server
             initialDelaySeconds: 20
             periodSeconds: 10
