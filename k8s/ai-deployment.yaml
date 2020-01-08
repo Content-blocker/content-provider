@@ -13,7 +13,7 @@ spec:
         app: blocker-ai
     spec:
       containers:
-        - image: docker.io/sr123/ai:ai-1.0.0-SNAPSHOT-14.1
+        - image: docker.io/sr123/ai:ai-1.0.0-SNAPSHOT-15.1
           name: blocker-ai
           env:
             - name: KUMULUZEE_DISCOVERY_CLUSTER

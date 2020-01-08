@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: blocker-provider-deployment
+  name: blocker-fetcher-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: blocker-provider
+      app: blocker-fetcher
   template:
     metadata:
       labels:
-        app: blocker-provider
+        app: blocker-fetcher
     spec:
       containers:
-        - image: docker.io/sr123/provider:provider-1.0.0-SNAPSHOT-22.1
-          name: blocker-provider
+        - image: docker.io/sr123/fetcher:fetcher-1.0.0-SNAPSHOT-2.1
+          name: blocker-fetcher
           env:
             - name: KUMULUZEE_DISCOVERY_CLUSTER
               value: gcloud
@@ -23,7 +23,7 @@ spec:
             - name: KUMULUZEE_CONFIG_ETCD_HOSTS
               value: http://34.89.142.186:2379
             - name: KUMULUZEE_SERVER_BASEURL
-              value: http://35.240.79.227:8081
+              value: http://35.240.79.227:8083
             #- name: KUMULUZEE_DATASOURCES0_CONNECTIONURL
             #  value: jdbc:postgresql://34.89.221.63:5432/postgres
             #- name: KUMULUZEE_DATASOURCES0_USERNAME
@@ -31,21 +31,21 @@ spec:
             #- name: KUMULUZEE_DATASOURCES0_PASSWORD
             #  valueFrom:
             #    secretKeyRef:
-             #     name: pg-pass
-             #     key: KUMULUZEE_DATASOURCES0_PASSWORD
+            #     name: pg-pass
+            #     key: KUMULUZEE_DATASOURCES0_PASSWORD
           ports:
-            - containerPort: 8081
+            - containerPort: 8083
               name: server
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /provider/health/live
+              path: /fetcher/health/live
               port: server
             initialDelaySeconds: 20
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /provider/health/ready
+              path: /fetcher/health/ready
               port: server
             initialDelaySeconds: 20
             periodSeconds: 10
@@ -54,12 +54,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: blocker-provider
+  name: blocker-fetcher
 spec:
   type: LoadBalancer
   ports:
-    - port: 8081
+    - port: 8083
       protocol: TCP
       targetPort: server
   selector:
-    app: blocker-provider
+    app: blocker-fetcher
