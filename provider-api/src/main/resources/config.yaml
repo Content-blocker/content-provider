@@ -44,7 +44,7 @@ kumuluzee:
                                   <!-- Default logger -->
                                   <Root level="all">
                                       <AppenderRef ref="console" level="info"/>
-                                      <AppenderRef ref="logstash" level="trace"/>
+                                      <AppenderRef ref="logstash" level="info"/>
                                   </Root>
                               </Loggers>
                           </Configuration>'

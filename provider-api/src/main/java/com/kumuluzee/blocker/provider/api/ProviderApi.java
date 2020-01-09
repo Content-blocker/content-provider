@@ -1,10 +1,13 @@
 package com.kumuluzee.blocker.provider.api;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import com.kumuluz.ee.discovery.annotations.DiscoverService;
+import com.kumuluz.ee.discovery.enums.AccessType;
 import com.kumuluz.ee.logs.*;
 import com.kumuluz.ee.logs.cdi.*;
 import org.eclipse.microprofile.metrics.annotation.Timed;
@@ -23,6 +26,10 @@ public class ProviderApi {
     static String providerString = (providerTarget.isPresent() ? providerTarget.get().getUri().toString() : "Empty");
     static String fetcherString = (fetcherTarget.isPresent() ? fetcherTarget.get().getUri().toString() : "Empty");
 
+    @Inject
+    @DiscoverService(value = "provider", environment = "test", version = "1.0.0", accessType = AccessType.GATEWAY)
+    Optional<WebTarget> providerLocalTarget;
+
     @GET
     @Timed
     @Produces(MediaType.TEXT_HTML)
@@ -32,8 +39,13 @@ public class ProviderApi {
         if(providerTarget.isPresent()){
             links += "<a href='"+ providerString + "/provider/api/integrations'>provider/api/integrations</a><br>";
             links += "<a href='"+ providerString + "/provider/api/integrations'>provider/api/makelog</a><br>";
-            links += "<a href='"+ providerString + "/provider/api/give-ebola'>provider/api/give-ebola</a><br>";
             links += "<a href='"+ providerString + "/provider/discovery'>provider/discovery</a><br>";
+            links += "<a href='"+ providerString + "/provider/health'>provider/health</a><br>";
+
+            links += "<br><a href='"+ providerString + "/provider/api/give-ebola'>provider/api/give-ebola</a><br>";
+            links += "<a href='"+ providerString + "/provider/api/give-cancer'>provider/api/give-cancer</a><br>";
+            links += "<a href='"+ providerString + "/provider/api/cure-ebola'>provider/api/cure-ebola</a><br>";
+            links += "<a href='"+ providerString + "/provider/api/cure-cancer'>provider/api/cure-cancer</a><br>";
         }
         return "Hellow world! <br> I provide. <br><br>" + links;
     }
@@ -42,7 +54,48 @@ public class ProviderApi {
     @Timed
     @Path("/give-ebola")
     public String giveebola() {
-        return "Imune to ebola.";
+        CustomHealthCheck.has_ebola = true;
+        if(providerLocalTarget.isPresent()){
+            String healthCheck = providerLocalTarget.get().path("/provider/health/live").request().get().readEntity(String.class);
+            return "Gave it ebola. \n" + healthCheck;
+        }
+        return "Did not discover provider.";
+    }
+
+    @GET
+    @Timed
+    @Path("/give-cancer")
+    public String givecancer() {
+        CustomHealthCheck.has_cancer = true;
+        if(providerLocalTarget.isPresent()){
+            String healthCheck = providerLocalTarget.get().path("/provider/health/live").request().get().readEntity(String.class);
+            return "Gave it cancer. \n" + healthCheck;
+        }
+        return "Did not discover provider.";
+    }
+
+    @GET
+    @Timed
+    @Path("/cure-ebola")
+    public String cureebola() {
+        CustomHealthCheck.has_ebola = false;
+        if(providerLocalTarget.isPresent()){
+            String healthCheck = providerLocalTarget.get().path("/provider/health/live").request().get().readEntity(String.class);
+            return "Cured it from ebola. \n" + healthCheck;
+        }
+        return "Did not discover provider.";
+    }
+
+    @GET
+    @Timed
+    @Path("/cure-cancer")
+    public String curecancer() {
+        CustomHealthCheck.has_cancer = false;
+        if(providerLocalTarget.isPresent()){
+            String healthCheck = providerLocalTarget.get().path("/provider/health/live").request().get().readEntity(String.class);
+            return "Cured it from cancer. \n" + healthCheck;
+        }
+        return "Did not discover provider.";
     }
 
     @GET

@@ -13,7 +13,7 @@ spec:
         app: blocker-provider
     spec:
       containers:
-        - image: docker.io/sr123/provider:provider-1.0.0-SNAPSHOT-22.1
+        - image: docker.io/sr123/provider:provider-1.0.0-SNAPSHOT-23.1
           name: blocker-provider
           env:
             - name: KUMULUZEE_DISCOVERY_CLUSTER
@@ -56,7 +56,7 @@ kind: Service
 metadata:
   name: blocker-provider
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
     - port: 8081
       protocol: TCP
