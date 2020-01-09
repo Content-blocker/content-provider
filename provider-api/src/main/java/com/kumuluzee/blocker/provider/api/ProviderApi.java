@@ -6,15 +6,20 @@ import javax.ws.rs.*;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import com.kumuluz.ee.cors.annotations.CrossOrigin;
 import com.kumuluz.ee.discovery.annotations.DiscoverService;
 import com.kumuluz.ee.discovery.enums.AccessType;
 import com.kumuluz.ee.logs.*;
 import com.kumuluz.ee.logs.cdi.*;
+import com.kumuluzee.blocker.provider.ContentService.ContentEntity;
+import com.kumuluzee.blocker.provider.ContentService.ContentService;
 import org.eclipse.microprofile.metrics.annotation.Timed;
-import java.util.Optional;
+import java.util.*;
+
 
 @Log
 @RequestScoped
+@CrossOrigin
 @Path("/api")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
@@ -30,6 +35,9 @@ public class ProviderApi {
     @DiscoverService(value = "provider", environment = "test", version = "1.0.0", accessType = AccessType.GATEWAY)
     Optional<WebTarget> providerLocalTarget;
 
+    @Inject
+    ContentService contentService;
+
     @GET
     @Timed
     @Produces(MediaType.TEXT_HTML)
@@ -41,11 +49,13 @@ public class ProviderApi {
             links += "<a href='"+ providerString + "/provider/api/integrations'>provider/api/makelog</a><br>";
             links += "<a href='"+ providerString + "/provider/discovery'>provider/discovery</a><br>";
             links += "<a href='"+ providerString + "/provider/health'>provider/health</a><br>";
-
-            links += "<br><a href='"+ providerString + "/provider/api/give-ebola'>provider/api/give-ebola</a><br>";
+            links += "<br>";
+            links += "<a href='"+ providerString + "/provider/api/give-ebola'>provider/api/give-ebola</a><br>";
             links += "<a href='"+ providerString + "/provider/api/give-cancer'>provider/api/give-cancer</a><br>";
             links += "<a href='"+ providerString + "/provider/api/cure-ebola'>provider/api/cure-ebola</a><br>";
             links += "<a href='"+ providerString + "/provider/api/cure-cancer'>provider/api/cure-cancer</a><br>";
+            links += "<br>";
+            links += "<a href='"+ providerString + "/provider/api/getBlockContent'>provider/api/getBlockContent</a><br>";
         }
         return "Hellow world! <br> I provide. <br><br>" + links;
     }
@@ -140,6 +150,20 @@ public class ProviderApi {
         out += "</div>";
 
         out += "</body>";
+        return out;
+    }
+
+    @GET
+    @Timed
+    @Path("/getBlockContent")
+    public String getBlockContent() {
+        List<ContentEntity> blockContent = contentService.getContentEntities();
+        String out = "{";
+        out += blockContent
+                .stream()
+                .map(e -> e.to_string())
+                .reduce("", (c, e) -> c + e + "\n");
+        out += "}";
         return out;
     }
 }

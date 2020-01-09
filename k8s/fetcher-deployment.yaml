@@ -13,7 +13,7 @@ spec:
         app: blocker-fetcher
     spec:
       containers:
-        - image: docker.io/sr123/fetcher:fetcher-1.0.0-SNAPSHOT-2.1
+        - image: docker.io/sr123/fetcher:fetcher-1.0.0-SNAPSHOT-3.1
           name: blocker-fetcher
           env:
             - name: KUMULUZEE_DISCOVERY_CLUSTER
