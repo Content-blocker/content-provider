@@ -41,13 +41,13 @@ spec:
             httpGet:
               path: /fetcher/health/live
               port: server
-            initialDelaySeconds: 20
+            initialDelaySeconds: 40
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /fetcher/health/ready
               port: server
-            initialDelaySeconds: 20
+            initialDelaySeconds: 40
             periodSeconds: 10
 ---
 

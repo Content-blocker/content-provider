@@ -1,6 +1,7 @@
 package com.kumuluzee.blocker.provider.ContentService;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.Instant;
 
 @Entity
@@ -9,7 +10,7 @@ import java.time.Instant;
     {
         @NamedQuery(name = "ContentEntity.selectAll", query = "SELECT ce FROM ContentEntity ce")
     })
-public class ContentEntity {
+public class ContentEntity implements Serializable {
 
     @Id
     @Column(name = "entryid")
@@ -24,7 +25,6 @@ public class ContentEntity {
     @Column(name = "relevance")
     private Integer relevance;
 
-
     public Integer getEntryId() {
         return entryid;
     }
@@ -33,11 +33,11 @@ public class ContentEntity {
         this.entryid = id;
     }
 
-    public String getTitle() {
+    public String getEntity() {
         return entity;
     }
 
-    public void setTitle(String entity) {
+    public void setEntity(String entity) {
         this.entity = entity;
     }
 
@@ -59,5 +59,9 @@ public class ContentEntity {
 
     public String to_string(){
         return "Entry id: " + entryid + ", Entity: " + entity + ", Related term: " + relatedterm + ", Relevance: " + relevance;
+    }
+
+    public String to_json(){
+        return "{\"entry_id\":\"" + entryid + "\", \"entity\":\"" + entity + "\", \"related_term\":\"" + relatedterm + "\", \"relevance\":" + relevance + "}";
     }
 }

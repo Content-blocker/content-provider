@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.kumuluz.ee.cors.annotations.CrossOrigin;
 import com.kumuluz.ee.discovery.annotations.DiscoverService;
@@ -13,6 +14,9 @@ import com.kumuluz.ee.logs.*;
 import com.kumuluz.ee.logs.cdi.*;
 import com.kumuluzee.blocker.provider.ContentService.ContentEntity;
 import com.kumuluzee.blocker.provider.ContentService.ContentService;
+import org.eclipse.microprofile.metrics.Counter;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Metric;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import java.util.*;
 
@@ -38,8 +42,13 @@ public class ProviderApi {
     @Inject
     ContentService contentService;
 
+    @Inject
+    @Metric(name = "simple_counter")
+    private Counter counter;
+
     @GET
     @Timed
+    @Counted(name = "simple_counter")
     @Produces(MediaType.TEXT_HTML)
     @Consumes(MediaType.APPLICATION_JSON)
     public String getResources() {
@@ -48,6 +57,8 @@ public class ProviderApi {
             links += "<a href='"+ providerString + "/provider/api/integrations'>provider/api/integrations</a><br>";
             links += "<a href='"+ providerString + "/provider/api/integrations'>provider/api/makelog</a><br>";
             links += "<a href='"+ providerString + "/provider/discovery'>provider/discovery</a><br>";
+            links += "<a href='"+ providerString + "/provider/discovery/ai'>provider/discovery/ai</a><br>";
+            links += "<a href='"+ providerString + "/provider/discovery/fetcher'>provider/discovery/fetcher</a><br>";
             links += "<a href='"+ providerString + "/provider/health'>provider/health</a><br>";
             links += "<br>";
             links += "<a href='"+ providerString + "/provider/api/give-ebola'>provider/api/give-ebola</a><br>";
@@ -57,7 +68,7 @@ public class ProviderApi {
             links += "<br>";
             links += "<a href='"+ providerString + "/provider/api/getBlockContent'>provider/api/getBlockContent</a><br>";
         }
-        return "Hellow world! <br> I provide. <br><br>" + links;
+        return "Hellow world! <br> I provide. <br><br>" + links + "<p>Visits:" + counter.getCount() + "</p>";
     }
 
     @GET
@@ -158,12 +169,54 @@ public class ProviderApi {
     @Path("/getBlockContent")
     public String getBlockContent() {
         List<ContentEntity> blockContent = contentService.getContentEntities();
-        String out = "{";
+        String out = "[";
         out += blockContent
                 .stream()
-                .map(e -> e.to_string())
-                .reduce("", (c, e) -> c + e + "\n");
-        out += "}";
+                .map(e -> e.to_json())
+                .reduce("", (c, e) -> c + e + ",\n");
+        out = out.substring(0,out.length() - 2) +"]";
         return out;
+    }
+
+    @POST
+    @Timed
+    @Path("/addBlockContent")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addBlockContent(@QueryParam("entity") String entity, @QueryParam("relatedterm") String relatedterm) {
+        if(entity == null || relatedterm == null){
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("{\"STATUS\":\"NO PARAMETERS, needs entity and relatedterm\"}")
+                    .build();
+        }
+
+        ContentEntity newContent = new ContentEntity();
+
+        List<ContentEntity> blockContent = contentService.getContentEntities();
+        int max = blockContent
+                .stream()
+                .mapToInt(e -> e.getEntryId())
+                .max()
+                .orElseThrow(NoSuchElementException::new);
+
+        newContent.setEntryId(max + 1);
+        newContent.setEntity(entity);
+        newContent.setRelatedTerm(relatedterm);
+        newContent.setRelevance(1);
+
+        try {
+            contentService.addEntity(newContent);
+        } catch(Exception e){
+            return Response
+                    .status(Response.Status.EXPECTATION_FAILED)
+                    .entity("{\"STATUS\":\"COULD NOT EXECUTE TRANSACTION.\"}")
+                    .build();
+        }
+
+        return Response
+                .status(Response.Status.OK)
+                .entity("{\"STATUS\":\"DONE\"}")
+                .build();
     }
 }

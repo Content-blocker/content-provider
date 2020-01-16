@@ -23,7 +23,9 @@ public class ContentService {
     @Transactional
     public void addEntity(ContentEntity contentEntity) {
         if (contentEntity != null) {
+            em.getTransaction().begin();
             em.persist(contentEntity);
+            em.getTransaction().commit();
         }
     }
 
