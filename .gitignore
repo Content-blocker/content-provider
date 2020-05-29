@@ -2,3 +2,4 @@
 target/
 provider-api/target/
 travis.log
+*.iml
