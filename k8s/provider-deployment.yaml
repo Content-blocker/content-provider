@@ -13,17 +13,17 @@ spec:
         app: blocker-provider
     spec:
       containers:
-        - image: docker.io/sr123/provider:provider-1.0.0-SNAPSHOT-24.1
+        - image: docker.io/sr123/provider:provider-1.0.0-SNAPSHOT-26.1
           name: blocker-provider
           env:
             - name: KUMULUZEE_DISCOVERY_CLUSTER
               value: gcloud
             - name: KUMULUZEE_DISCOVERY_ETCD_HOSTS
-              value: http://34.89.142.186:2379
+              value: http://34.65.200.108:2379
             - name: KUMULUZEE_CONFIG_ETCD_HOSTS
-              value: http://34.89.142.186:2379
+              value: http://34.65.200.108:2379
             - name: KUMULUZEE_SERVER_BASEURL
-              value: http://35.240.79.227:8081
+              value: http://34.107.143.25
             #- name: KUMULUZEE_DATASOURCES0_CONNECTIONURL
             #  value: jdbc:postgresql://34.89.221.63:5432/postgres
             #- name: KUMULUZEE_DATASOURCES0_USERNAME
@@ -31,8 +31,8 @@ spec:
             #- name: KUMULUZEE_DATASOURCES0_PASSWORD
             #  valueFrom:
             #    secretKeyRef:
-             #     name: pg-pass
-             #     key: KUMULUZEE_DATASOURCES0_PASSWORD
+            #     name: pg-pass
+            #     key: KUMULUZEE_DATASOURCES0_PASSWORD
           ports:
             - containerPort: 8081
               name: server
