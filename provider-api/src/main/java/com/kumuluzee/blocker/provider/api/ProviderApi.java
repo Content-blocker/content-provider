@@ -178,12 +178,7 @@ public class ProviderApi {
         return out;
     }
 
-    @POST
-    @Timed
-    @Path("/addBlockContent")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response addBlockContent(@QueryParam("entity") String entity, @QueryParam("relatedterm") String relatedterm) {
+    public Response addBlockContentHandle(String entity, String relatedterm){
         if(entity == null || relatedterm == null){
             return Response
                     .status(Response.Status.BAD_REQUEST)
@@ -194,11 +189,14 @@ public class ProviderApi {
         ContentEntity newContent = new ContentEntity();
 
         List<ContentEntity> blockContent = contentService.getContentEntities();
-        int max = blockContent
-                .stream()
-                .mapToInt(e -> e.getEntryId())
-                .max()
-                .orElseThrow(NoSuchElementException::new);
+        int max = 0;
+        try {
+            max = blockContent
+                    .stream()
+                    .mapToInt(e -> e.getEntryId())
+                    .max()
+                    .orElseThrow(NoSuchElementException::new);
+        }   catch(NoSuchElementException e) {}
 
         newContent.setEntryId(max + 1);
         newContent.setEntity(entity);
@@ -218,5 +216,23 @@ public class ProviderApi {
                 .status(Response.Status.OK)
                 .entity("{\"STATUS\":\"DONE\"}")
                 .build();
+    }
+
+    @GET
+    @Timed
+    @Path("/addBlockContent")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addBlockContent(@QueryParam("entity") String entity, @QueryParam("relatedterm") String relatedterm) {
+        return addBlockContentHandle(entity, relatedterm);
+    }
+
+    @POST
+    @Timed
+    @Path("/addBlockContent")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addBlockContentPost(@QueryParam("entity") String entity, @QueryParam("relatedterm") String relatedterm) {
+        return addBlockContentHandle(entity, relatedterm);
     }
 }
